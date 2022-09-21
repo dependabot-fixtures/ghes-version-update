@@ -34,8 +34,12 @@ jobs:
       run: |
         git config --global user.name "ghe-admin"
         git config --global user.email "ghe-admin@localhost"
-    - name: Create and Clone Repo
+    - name: Create Repo
       env:
         GH_HOST: ${{ github.event.inputs.ghes_host }}
         GH_ENTERPRISE_TOKEN: ${{ github.event.inputs.ghes_token }}  
-      run: gh repo create ${{ github.event.inputs.ghes_org }}/ghes-version-update --private --source=. --remote=upstream --push
+      run: gh repo create ${{ github.event.inputs.ghes_org }}/ghes-version-update --private --source=. --remote=upstream
+    - name: Push Contents
+      run: |
+        git remote set-url upstream https://${{ github.event.inputs.ghes_token }}@${{ github.event.inputs.ghes_host }}/${{ github.event.inputs.ghes_org }}/ghes-version-update.git
+        git push upstream
